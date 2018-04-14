@@ -10,3 +10,14 @@ default for unix and windows.
 
 Any copyrights belong to the Go authors.
 
+
+## Usage
+
+```go
+    import "github.com/panamafrancis/tizzy"
+
+    ...
+
+    loc, err := tizzy.LoadLocation("Europe/Berlin")
+```
+
