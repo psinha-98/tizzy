@@ -1,5 +1,9 @@
 # Tizzy
 
+[![Build Status](https://secure.travis-ci.org/panamafrancis/tizzy.png?branch=master)](http://travis-ci.org/panamafrancis/tizzy)
+[![GoDoc](https://godoc.org/github.com/panamafrancis/tizzy?status.svg)](https://godoc.org/github.com/panamafrancis/tizzy)
+[![License](https://img.shields.io/github/license/panamafrancis/tizzy.svg)](https://github.com/panamafrancis/tizzy/blob/master/LICENSE)
+
 An in-memory copy of time.LoadLocation(), nothing original simply a workaround
 for when you find your code calling time.LoadLocation() at 1khz which will open
 a zip file on disk to unmarshal files containing bindata into a time.Location
