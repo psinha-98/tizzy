@@ -7,13 +7,14 @@ package tizzy
 import (
 	"archive/zip"
 	"errors"
+	"io/ioutil"
 	"log"
 	"runtime"
 	"time"
 )
 
 var (
-	timezones = map[string]time.Location{}
+	locations = map[string]time.Location{}
 )
 
 func init() {
@@ -34,16 +35,27 @@ func init() {
 			continue
 		}
 
-		if _, ok := timezones[f.Name]; ok {
+		if _, ok := locations[f.Name]; ok {
 			continue
 		}
 
-		tz, err := time.LoadLocation(f.Name)
+		bd, err := f.Open()
 		if err != nil {
-			log.Fatalf("Could not load location '%s': '%v'", f.Name, err)
+			log.Fatalf("Could not open file '%s': error: '%v'", f.Name, err)
 		}
 
-		timezones[f.Name] = *tz
+		tz, err := ioutil.ReadAll(bd)
+		bd.Close()
+		if err != nil {
+			log.Fatalf("Could not read file '%s': error: '%v'", f.Name, err)
+		}
+
+		loc, err := time.LoadLocationFromTZData(f.Name, tz)
+		if err != nil {
+			log.Fatalf("Could not load location '%s': error: '%v'", f.Name, err)
+		}
+
+		locations[f.Name] = *loc
 	}
 }
 
@@ -69,7 +81,7 @@ func LoadLocation(name string) (*time.Location, error) {
 		return nil, errors.New("time: invalid location name")
 	}
 
-	zoneData, ok := timezones[name]
+	zoneData, ok := locations[name]
 	if !ok {
 		return nil, errors.New("unknown time zone " + name)
 	}
