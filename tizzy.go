@@ -67,26 +67,35 @@ func init() {
 // Otherwise, the name is taken to be a location name corresponding to a file
 // in the IANA Time Zone database, such as "America/New_York".
 func LoadLocation(name string) (*time.Location, error) {
+	l, err := LoadLocationValue(name)
+	if err != nil {
+		return nil, err
+	}
+	return &l, err
+}
+
+// LoadLocationValue avoids allocations on the heap.
+func LoadLocationValue(name string) (time.Location, error) {
 	if name == "" || name == "UTC" {
-		return time.UTC, nil
+		return *time.UTC, nil
 	}
 
 	if name == "Local" {
-		return time.Local, nil
+		return *time.Local, nil
 	}
 
 	if containsDotDot(name) || name[0] == '/' || name[0] == '\\' {
 		// No valid IANA Time Zone name contains a single dot,
 		// much less dot dot. Likewise, none begin with a slash.
-		return nil, errors.New("time: invalid location name")
+		return time.Location{}, errors.New("time: invalid location name")
 	}
 
 	zoneData, ok := locations[name]
 	if !ok {
-		return nil, errors.New("unknown time zone " + name)
+		return time.Location{}, errors.New("unknown time zone " + name)
 	}
 
-	return &zoneData, nil
+	return zoneData, nil
 }
 
 // containsDotDot reports whether s contains "..".
