@@ -13,7 +13,7 @@ default for unix and windows.
 
 Any copyrights belong to the Go authors.
 
-Only supports go 1.10
+Supports go 1.11
 
 ## Usage
 
